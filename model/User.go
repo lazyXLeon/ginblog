@@ -48,9 +48,28 @@ func GetUsers(pageSize int, pageNum int) []User {
 	return users
 }
 
-// 编辑用户
+// EditUser 编辑用户信息
+func EditUser(id int, data *User) int {
+	var user User
+	var maps = make(map[string]interface{})
+	maps["username"] = data.Username
+	maps["role"] = data.Role
+	err = db.Model(&user).Where("id = ?", id).Updates(maps).Error
+	if err != nil {
+		return errmsg.ERROR
+	}
+	return errmsg.SUCCESS
+}
 
-// 删除用户
+// DeleteUser 删除用户
+func DeleteUser(id int) int {
+	var user User
+	err = db.Where("id = ?", id).Delete(&user).Error
+	if err != nil {
+		return errmsg.ERROR
+	}
+	return errmsg.SUCCESS
+}
 
 // BeforeSave 密码加密
 func (u *User) BeforeSave(_ *gorm.DB) (err error) {
