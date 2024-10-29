@@ -29,7 +29,7 @@ func CheckUser(name string) (code int) {
 
 // CreateUser 新增用户
 func CreateUser(data *User) int {
-	data.Password = ScryptPw(data.Password)
+	//data.Password = ScryptPw(data.Password)
 	err := db.Create(&data).Error
 	if err != nil {
 		return errmsg.ERROR //500
@@ -50,7 +50,13 @@ func GetUsers(pageSize int, pageNum int) []User {
 
 // 编辑用户
 
-// 删除
+// 删除用户
+
+// BeforeSave 密码加密
+func (u *User) BeforeSave(_ *gorm.DB) (err error) {
+	u.Password = ScryptPw(u.Password)
+	return nil
+}
 
 // ScryptPw 密码加密
 func ScryptPw(password string) string {
