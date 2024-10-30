@@ -25,6 +25,8 @@ func InitRouter() {
 		//文章模块的路由接口
 		routerV1.POST("article/add", v1.AddArt)
 		routerV1.GET("article", v1.GetArt)
+		routerV1.GET("article/info/:id", v1.GetArtInfo)
+		routerV1.GET("article/list/:id", v1.GetCateArt)
 		routerV1.PUT("article/:id", v1.EditArt)
 		routerV1.DELETE("article/:id", v1.DeleteArt)
 	}
