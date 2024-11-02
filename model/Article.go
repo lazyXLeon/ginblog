@@ -27,13 +27,15 @@ func CreateArt(data *Article) int {
 }
 
 // GetCateArt 查询分类下的所有文章
-func GetCateArt(id int, pageSize int, pageNum int) ([]Article, int) {
+func GetCateArt(id int, pageSize int, pageNum int) ([]Article, int, int64) {
 	var cateArtList []Article
-	err = db.Preload("Category").Limit(pageSize).Offset((pageNum-1)*pageSize).Where("cid=?", id).Find(&cateArtList).Error
+	var total int64
+
+	err = db.Preload("Category").Limit(pageSize).Offset((pageNum-1)*pageSize).Where("cid=?", id).Find(&cateArtList).Count(&total).Error
 	if err != nil || len(cateArtList) == 0 {
-		return nil, errmsg.ERROR_CATENAME_NOT_EXIST
+		return nil, errmsg.ERROR_CATENAME_NOT_EXIST, 0
 	}
-	return cateArtList, errmsg.SUCCESS
+	return cateArtList, errmsg.SUCCESS, total
 }
 
 // GetArtInfo 查询单个文章
@@ -47,14 +49,14 @@ func GetArtInfo(id int) (Article, int) {
 }
 
 // GetArt 查询文章列表
-func GetArt(pageSize int, pageNum int) ([]Article, int) {
+func GetArt(pageSize int, pageNum int) ([]Article, int, int64) {
 	var articles []Article
-	//var total int64
-	err = db.Preload("Category").Limit(pageSize).Offset((pageNum - 1) * pageSize).Find(&articles).Error
+	var total int64
+	err = db.Preload("Category").Limit(pageSize).Offset((pageNum - 1) * pageSize).Find(&articles).Count(&total).Error
 	if err != nil && !errors.Is(gorm.ErrRecordNotFound, err) {
-		return nil, errmsg.ERROR
+		return nil, errmsg.ERROR, 0
 	}
-	return articles, errmsg.SUCCESS
+	return articles, errmsg.SUCCESS, total
 }
 
 // EditArt 编辑文章
